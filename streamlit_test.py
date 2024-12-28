@@ -263,7 +263,7 @@ FixturesElementsAll2Filteredslim.sort_values(by='event', ascending=True)
 
 FixturesElementsAll2Filteredslim=FixturesElementsAll2Filteredslim.drop_duplicates(subset=['event','web_name'])
 
-fig = px.bar(data_frame=FixturesElementsAll2Filteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
+#fig = px.bar(data_frame=FixturesElementsAll2Filteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
 
 ##### Returns Output 2 FixturesElementsAllGrouped
 
@@ -277,6 +277,5 @@ st.write(FixturesElementsAllGrouped)
 
 st.write("Shown at a game level")
 st.write(FixturesElementsAll2Filtered)
-st.plotly_chart(fig, use_container_width=True)
-
+st.line_chart(data=FixturesElementsAll2Filteredslim, x="event", y="AttackOpp_pergame", x_label=None, y_label=None, color="web_name", use_container_width=True)
 
