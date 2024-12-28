@@ -246,5 +246,8 @@ FixturesElementsAllGrouped = FixturesElementsAllGrouped[['playerid','web_name','
 
 FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']].mean(numeric_only=True)
 
-st.write("Here is  the data")
+st.write("Grouped for next 4 Games")
 st.write(FixturesElementsAllGrouped)
+
+st.write("Shown at a game level")
+st.write(FixturesElementsAll2)
