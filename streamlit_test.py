@@ -251,3 +251,7 @@ st.write(FixturesElementsAllGrouped)
 
 st.write("Shown at a game level")
 st.write(FixturesElementsAll2)
+
+option = st.selectbox(
+    'Select Event',
+     FixturesElementsAll2['event'])
