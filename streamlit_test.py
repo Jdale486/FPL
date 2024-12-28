@@ -8,6 +8,9 @@ import itertools as it
 
 st.write("Hello World2")
 
+
+st.write("3Hello World3")
+
 ##Request fixtures from FPL API
 
 url = f"https://fantasy.premierleague.com/api/fixtures/"
@@ -217,6 +220,7 @@ GWElementsDFLast4Weeks['ExcludeDef'] = GWElementsDFLast4Weeks.apply(
     axis=1
 )
 
+
 grouped_dfLast4Weeks=GWElementsDFLast4Weeks[GWElementsDFLast4Weeks['ExcludeDef']!='Y']
 grouped_dfLast4Weeks.head()
 
@@ -248,8 +252,8 @@ FixturesElementsAllGrouped = FixturesElementsAllGrouped[['playerid','web_name','
 
 FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']].mean(numeric_only=True)
 
-#st.write("Grouped for next 4 Games")
-#st.write(FixturesElementsAllGrouped)
+st.write("Grouped for next 4 Games")
+st.write(FixturesElementsAllGrouped)
 
-#st.write("Shown at a game level")
-#st.write(FixturesElementsAll2Filtered)
+st.write("Shown at a game level")
+st.write(FixturesElementsAll2Filtered)
