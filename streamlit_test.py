@@ -274,7 +274,5 @@ FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web
 st.write("Grouped for next 4 Games")
 st.write(FixturesElementsAllGrouped)
 
-# st.write("Shown at a game level")
-# st.write(FixturesElementsAll2Filtered)
-#st.line_chart(FixturesElementsAll2Filteredslim,x="event",y="AttackOpp_pergame",color="web_name")
+
 
