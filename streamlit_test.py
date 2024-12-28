@@ -276,5 +276,5 @@ st.write(FixturesElementsAllGrouped)
 
 st.write("Shown at a game level")
 st.write(FixturesElementsAll2Filtered)
-st.line_chart(FixturesElementsAll2Filteredslim, x="event",y="AttackOpp_pergame", colour = "web_name")
+st.line_chart(FixturesElementsAll2Filteredslim,x="event",y="AttackOpp_pergame",color="web_name")
 
