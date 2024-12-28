@@ -269,12 +269,12 @@ FixturesElementsAll2Filteredslim=FixturesElementsAll2Filteredslim.drop_duplicate
 FixturesElementsAllGrouped = FixturesElementsAll2[FixturesElementsAll2['event']>UpcomingWeek-NoWeeks-1]
 FixturesElementsAllGrouped = FixturesElementsAllGrouped[['playerid','web_name','element_type','team','now_cost','expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']]
 
-FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']].mean(numeric_only=True)
+FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','v','DefenceOpp_pergame']].mean(numeric_only=True)
 
 st.write("Grouped for next 4 Games")
 st.write(FixturesElementsAllGrouped)
 
 st.write("Shown at a game level")
 st.write(FixturesElementsAll2Filtered)
-st.line_chart(FixturesElementsAll2Filteredslim)
+st.line_chart(FixturesElementsAll2Filteredslim, x="event",y="AttackOpp_pergame", colour = "web_name")
 
