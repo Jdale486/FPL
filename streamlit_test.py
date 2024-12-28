@@ -239,6 +239,8 @@ FixturesElementsAll2['AttackOpp_pergame'] = FixturesElementsAll2['XGC_Weighted']
 
 FixturesElementsAll2['DefenceOpp_pergame'] = FixturesElementsAll2['XGI_Weighted']*FixturesElementsAll2['expected_goals_conceded.gw']
 
+FixturesElementsAll2Filtered = FixturesElementsAll2[FixturesElementsAll2['event']==UpcomingWeek]
+
 ##### Returns Output 2 FixturesElementsAllGrouped
 
 FixturesElementsAllGrouped = FixturesElementsAll2[FixturesElementsAll2['event']>UpcomingWeek-NoWeeks-1]
@@ -246,12 +248,8 @@ FixturesElementsAllGrouped = FixturesElementsAllGrouped[['playerid','web_name','
 
 FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']].mean(numeric_only=True)
 
-st.write("Grouped for next 4 Games")
-st.write(FixturesElementsAllGrouped)
+#st.write("Grouped for next 4 Games")
+#st.write(FixturesElementsAllGrouped)
 
-st.write("Shown at a game level")
-st.write(FixturesElementsAll2)
-
-option = st.selectbox(
-    'Select Event',
-     FixturesElementsAll2['event'])
+#st.write("Shown at a game level")
+#st.write(FixturesElementsAll2Filtered)
