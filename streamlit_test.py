@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from decimal import Decimal
 import itertools as it
+import plotly.express as px
 
 st.write("Hello World2")
 
@@ -243,7 +244,26 @@ FixturesElementsAll2['AttackOpp_pergame'] = FixturesElementsAll2['XGC_Weighted']
 
 FixturesElementsAll2['DefenceOpp_pergame'] = FixturesElementsAll2['XGI_Weighted']*FixturesElementsAll2['expected_goals_conceded.gw']
 
-FixturesElementsAll2Filtered = FixturesElementsAll2[FixturesElementsAll2['event']==UpcomingWeek]
+FixturesElementsAll2.to_csv('FixturesElementsAll.csv')
+
+# Calculate total AttackOpp_pergame for each player
+FixturesElementsAll2 = FixturesElementsAll2[FixturesElementsAll2['event']<UpcomingWeek+4]
+FixturesElementsAll2_totals = FixturesElementsAll2.groupby('web_name')['AttackOpp_pergame'].sum().reset_index()
+
+# Sort players by total AttackOpp_pergame and select top 20
+top_players = FixturesElementsAll2_totals.sort_values(by='AttackOpp_pergame', ascending=False).head(10)
+
+# Filter original DataFrame to include only top 20 players
+FixturesElementsAll2Filtered = FixturesElementsAll2[FixturesElementsAll2['web_name'].isin(top_players['web_name'])]
+
+FixturesElementsAll2Filteredslim = FixturesElementsAll2Filtered[['web_name','event','AttackOpp_pergame']]
+FixturesElementsAll2Filteredslim['event'].astype(int)
+FixturesElementsAll2Filteredslim['AttackOpp_pergame'].astype(float)
+FixturesElementsAll2Filteredslim.sort_values(by='event', ascending=True)
+
+FixturesElementsAll2Filteredslim=FixturesElementsAll2Filteredslim.drop_duplicates(subset=['event','web_name'])
+
+fig = px.bar(data_frame=FixturesElementsAll2Filteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
 
 ##### Returns Output 2 FixturesElementsAllGrouped
 
@@ -257,3 +277,6 @@ st.write(FixturesElementsAllGrouped)
 
 st.write("Shown at a game level")
 st.write(FixturesElementsAll2Filtered)
+st.plotly_chart(fig, use_container_width=True)
+
+
