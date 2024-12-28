@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 from decimal import Decimal
 import itertools as it
-import plotly.express as px
 
 st.write("Hello World2")
 
