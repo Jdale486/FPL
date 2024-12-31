@@ -1,15 +1,14 @@
-import streamlit as st
+##import packages
+
 import requests
 import json
 import pandas as pd
 import numpy as np
 from decimal import Decimal
 import itertools as it
-
-st.write("Hello World2")
-
-
-st.write("3Hello World3")
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
 
 ##Request fixtures from FPL API
 
@@ -147,12 +146,16 @@ elements_dim = json_data['elements']
 
 Elements_Dim1 = pd.json_normalize(elements_dim)
 
+Elements_Dim1.to_csv('elementsdim.csv')
+
 Elements_Dim1 = pd.merge(GWElementsDF1, Elements_Dim1,left_on='playerid', right_on='id', how='outer',suffixes=('.gw', '.info'))
 
 Elements_Dim1['ExcludeDef'] = Elements_Dim1.apply(
     lambda row: 'Y' if (row['element_type'] == '1' or row['element_type'] == '2') and row['minutes_x'] > 59 else 'N', 
     axis=1
 )
+
+Elements_Dim1.to_csv('elements4wk.csv')
 
 ###Arbitrary team weightings calculated based on average of last season's odds
 
@@ -182,7 +185,6 @@ Elements_Dim2['XGC_Weighted'] = Elements_Dim2['Weighting'].astype(float)*Element
 
 Elements_Dim2['XGI_Weighted'] = Elements_Dim2['expected_goal_involvements.gw'].astype(float)/Elements_Dim2['Weighting'].astype(float)
 
-
 ###Filtered to only include the previous 4 weeks' data before it is grouped to return total sum for each team 
 
 Elements_Dim2Filtered = Elements_Dim2[Elements_Dim2['event']>PrevWeek-4]
@@ -202,10 +204,15 @@ Elements_Dim2Grouped2 = Elements_Dim2Grouped1.groupby(['OppTeam']).agg(
     Minutes=('Minutes', 'mean')
 ).reset_index()
 
+
+
+Elements_Dim2Grouped2.head()
+
 ##Previous 4 Gameweeks this dataframe is returning the averages for the selected players 
 Elements_Dim1 = Elements_Dim1[Elements_Dim1['event']<UpcomingWeek]
 
 GWElementsDFLast4Weeks = Elements_Dim1[Elements_Dim1['event']>UpcomingWeek-NoWeeks-1]
+
 GWElementsDFLast4Weeks = GWElementsDFLast4Weeks[['minutes_x','playerid','web_name','element_type','team','now_cost','expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw']]
 
 GWElementsDFLast4Weeks['expected_goals.gw'] = GWElementsDFLast4Weeks['expected_goals.gw'].astype(float)
@@ -219,7 +226,6 @@ GWElementsDFLast4Weeks['ExcludeDef'] = GWElementsDFLast4Weeks.apply(
     lambda row: 'Y' if (row['element_type'] == 1 or row['element_type'] == 2) and row['minutes_x']< 59 else 'N', 
     axis=1
 )
-
 
 grouped_dfLast4Weeks=GWElementsDFLast4Weeks[GWElementsDFLast4Weeks['ExcludeDef']!='Y']
 grouped_dfLast4Weeks.head()
@@ -243,36 +249,78 @@ FixturesElementsAll2['AttackOpp_pergame'] = FixturesElementsAll2['XGC_Weighted']
 
 FixturesElementsAll2['DefenceOpp_pergame'] = FixturesElementsAll2['XGI_Weighted']*FixturesElementsAll2['expected_goals_conceded.gw']
 
-FixturesElementsAll2.to_csv('FixturesElementsAll.csv')
+FixturesElementsAll2Att=FixturesElementsAll2[FixturesElementsAll2['element_type']>2]
 
 # Calculate total AttackOpp_pergame for each player
-# FixturesElementsAll2 = FixturesElementsAll2[FixturesElementsAll2['event']<UpcomingWeek+4]
-# FixturesElementsAll2_totals = FixturesElementsAll2.groupby('web_name')['AttackOpp_pergame'].sum().reset_index()
+FixturesElementsAll2Att = FixturesElementsAll2Att[FixturesElementsAll2Att['event']<UpcomingWeek+4]
+FixturesElementsAll2_totalsAtt = FixturesElementsAll2Att.groupby('web_name')['AttackOpp_pergame'].sum().reset_index()
 
-# # Sort players by total AttackOpp_pergame and select top 20
-# top_players = FixturesElementsAll2_totals.sort_values(by='AttackOpp_pergame', ascending=False).head(10)
+# Sort players by total AttackOpp_pergame and select top 20
+top_players = FixturesElementsAll2_totalsAtt.sort_values(by='AttackOpp_pergame', ascending=False).head(10)
 
-# # Filter original DataFrame to include only top 20 players
-# FixturesElementsAll2Filtered = FixturesElementsAll2[FixturesElementsAll2['web_name'].isin(top_players['web_name'])]
+# Filter original DataFrame to include only top 20 players
+FixturesElementsAll2AttFiltered = FixturesElementsAll2[FixturesElementsAll2['web_name'].isin(top_players['web_name'])]
 
-# FixturesElementsAll2Filteredslim = FixturesElementsAll2Filtered[['web_name','event','AttackOpp_pergame']]
-# FixturesElementsAll2Filteredslim['event'].astype(int)
-# FixturesElementsAll2Filteredslim['AttackOpp_pergame'].astype(float)
-# FixturesElementsAll2Filteredslim.sort_values(by='event', ascending=True)
+FixturesElementsAll2AttFilteredslim = FixturesElementsAll2AttFiltered[['web_name','event','AttackOpp_pergame']]
+FixturesElementsAll2AttFilteredslim['AttackOpp_pergame'].astype(float)
+FixturesElementsAll2AttFilteredslim.sort_values(by='event', ascending=True)
 
-# FixturesElementsAll2Filteredslim=FixturesElementsAll2Filteredslim.drop_duplicates(subset=['event','web_name'])
+FixturesElementsAll2AttFilteredslim=FixturesElementsAll2AttFilteredslim.drop_duplicates(subset=['event','web_name'])
 
-#fig = px.bar(data_frame=FixturesElementsAll2Filteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
-
-##### Returns Output 2 FixturesElementsAllGrouped
-
-FixturesElementsAllGrouped = FixturesElementsAll2[FixturesElementsAll2['event']>UpcomingWeek-NoWeeks-1]
-FixturesElementsAllGrouped = FixturesElementsAllGrouped[['playerid','web_name','element_type','team','now_cost','expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','AttackOpp_pergame','DefenceOpp_pergame']]
-
-FixturesElementsAllGrouped = FixturesElementsAllGrouped.groupby(['playerid','web_name','element_type','now_cost','team'], as_index=False)[['expected_goals.gw','expected_assists.gw','expected_goal_involvements.gw','expected_goals_conceded.gw','XGI_Weighted','XGC_Weighted','v','DefenceOpp_pergame']].mean(numeric_only=True)
-
-#st.write("Grouped for next 4 Games")
-#st.write(FixturesElementsAllGrouped)
+figAttAtt = px.bar(data_frame=FixturesElementsAll2AttFilteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
 
 
+FixturesElementsAll2Def=FixturesElementsAll2[FixturesElementsAll2['element_type']<3]
 
+# Calculate total DefackOpp_pergame for each player
+FixturesElementsAll2Def = FixturesElementsAll2Def[FixturesElementsAll2Def['event']<UpcomingWeek+4]
+FixturesElementsAll2_totalsDef = FixturesElementsAll2Def.groupby('web_name')['DefenceOpp_pergame'].sum().reset_index()
+
+# Sort players by total DefackOpp_pergame and select top 20
+top_players = FixturesElementsAll2_totalsDef.sort_values(by='DefenceOpp_pergame', ascending=True).head(10)
+
+# Filter original DataFrame to include only top 20 players
+FixturesElementsAll2DefFiltered = FixturesElementsAll2[FixturesElementsAll2['web_name'].isin(top_players['web_name'])]
+
+FixturesElementsAll2DefFilteredslim = FixturesElementsAll2DefFiltered[['web_name','event','DefenceOpp_pergame']]
+FixturesElementsAll2DefFilteredslim['DefenceOpp_pergame'].astype(float)
+FixturesElementsAll2DefFilteredslim.sort_values(by='event', ascending=True)
+
+FixturesElementsAll2DefFilteredslim=FixturesElementsAll2DefFilteredslim.drop_duplicates(subset=['event','web_name'])
+
+figDefDef = px.bar(data_frame=FixturesElementsAll2DefFilteredslim, x="event", y="DefenceOpp_pergame", barmode='group', color='web_name')
+
+
+FixturesElementsAll2Def1=FixturesElementsAll2[FixturesElementsAll2['element_type']<3]
+
+# Calculate total Def1ackOpp_pergame for each player
+FixturesElementsAll2Def1 = FixturesElementsAll2Def1[FixturesElementsAll2Def1['event']<UpcomingWeek+4]
+FixturesElementsAll2_totalsDef1 = FixturesElementsAll2Def1.groupby('web_name')['AttackOpp_pergame'].sum().reset_index()
+
+# Sort players by total Def1ackOpp_pergame and select top 20
+top_players = FixturesElementsAll2_totalsDef1.sort_values(by='AttackOpp_pergame', ascending=False).head(10)
+
+# Filter original DataFrame to include only top 20 players
+FixturesElementsAll2Def1Filtered = FixturesElementsAll2[FixturesElementsAll2['web_name'].isin(top_players['web_name'])]
+
+FixturesElementsAll2Def1Filteredslim = FixturesElementsAll2Def1Filtered[['web_name','event','AttackOpp_pergame']]
+FixturesElementsAll2Def1Filteredslim['AttackOpp_pergame'].astype(float)
+FixturesElementsAll2Def1Filteredslim.sort_values(by='event', ascending=True)
+
+FixturesElementsAll2Def1Filteredslim=FixturesElementsAll2Def1Filteredslim.drop_duplicates(subset=['event','web_name'])
+
+figDefAtt = px.bar(data_frame=FixturesElementsAll2Def1Filteredslim, x="event", y="AttackOpp_pergame", barmode='group', color='web_name')
+
+
+st.write("figDefAtt")
+
+st.plotly_chart(figDefAtt, use_container_width=True)
+
+st.write("figDefDef")
+
+st.plotly_chart(figDefDef, use_container_width=True)
+
+
+st.write("figAttAtt")
+
+st.plotly_chart(figAttAtt, use_container_width=True)
