@@ -10,11 +10,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-TeamIDSel = st.number_input("Enter Team ID", step=1)
-st.write("Current Team ID:", TeamIDSel)
+#TeamIDSel = st.number_input("Enter Team ID", step=1)
+#st.write("Current Team ID:", TeamIDSel)
 
-NoPlayersShown = st.number_input("Enter No. of Players to View", step=1,placeholder=10)
-st.write("No. of Players Shown:", NoPlayersShown)
+#NoPlayersShown = st.number_input("Enter No. of Players to View", step=1,placeholder=10)
+#st.write("No. of Players Shown:", NoPlayersShown)
 
 
 ##Request fixtures from FPL API
@@ -41,11 +41,13 @@ NoTrailingWeeks = 4
 
 NoForecastWeeks = 5
 
-TeamID = TeamIDSel.astype(int)
+#TeamID = TeamIDSel.astype(int)
 
-NoPlayersShownInt = NoPlayersShown.astype(int)
+#NoPlayersShownInt = NoPlayersShown.astype(int)
 
-#TeamID = 1769272
+TeamID = 1769272
+
+NoPlayersShownInt = 20
 
 print(UpcomingWeek)
 print(PrevWeek)
